@@ -1,0 +1,5 @@
+/public/uploads/profiles/*
+/public/uploads/pets/*
+!.gitkeep
+.DS_Store
+Thumbs.db
