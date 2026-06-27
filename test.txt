@@ -1,2 +1,0 @@
-Test file created on 2026-06-24 for testing Git repository connectivity.
-Hello World! This is a simple test file.
