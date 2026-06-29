@@ -86,6 +86,79 @@ class UserController
         redirect('index.php?page=riwayat');
     }
 
+    public function editBookingForm(): void
+    {
+        requireLogin();
+        $id = (int) ($_GET['id'] ?? 0);
+        $booking = $this->bookings->findForUser($id, (int) $_SESSION['user_id']);
+        if (!$booking) {
+            flash('error', 'Booking tidak ditemukan.');
+            redirect('index.php?page=riwayat');
+        }
+        if ($booking['status'] !== 'pending') {
+            flash('error', 'Booking hanya dapat diedit saat status pending.');
+            redirect('index.php?page=riwayat');
+        }
+        render('user/edit_booking', [
+            'title' => 'Edit Booking',
+            'booking' => $booking,
+            'services' => $this->services->all(),
+        ]);
+    }
+
+    public function editBookingUpdate(): void
+    {
+        requireLogin();
+        verifyCsrf();
+        $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+        $booking = $this->bookings->findForUser($id, (int) $_SESSION['user_id']);
+        if (!$booking || $booking['status'] !== 'pending') {
+            flash('error', 'Booking tidak dapat diperbarui.');
+            redirect('index.php?page=riwayat');
+        }
+
+        $required = ['pet_name', 'pet_type', 'service_id', 'booking_date', 'booking_time'];
+        foreach ($required as $field) {
+            if (empty($_POST[$field])) {
+                flash('error', 'Semua field wajib diisi.');
+                redirect('index.php?page=editBooking&id=' . $id);
+            }
+        }
+        if ($_POST['booking_time'] < '08:00' || $_POST['booking_time'] > '17:00' || $_POST['booking_date'] < date('Y-m-d')) {
+            flash('error', 'Pilih tanggal hari ini atau setelahnya, jam 08:00 sampai 17:00.');
+            redirect('index.php?page=editBooking&id=' . $id);
+        }
+
+        $petImage = uploadImage('pet_image', 'pets', false);
+        $paymentProof = uploadImage('payment_proof', 'payments', false);
+
+        if ($petImage && $booking['pet_image']) {
+            deleteUploadedFile('pets', $booking['pet_image']);
+        }
+        if ($paymentProof && !empty($booking['payment_proof'])) {
+            deleteUploadedFile('payments', $booking['payment_proof']);
+        }
+
+        $updated = $this->bookings->updateBooking($id, (int) $_SESSION['user_id'], [
+            'service_id' => (int) $_POST['service_id'],
+            'pet_name' => trim($_POST['pet_name']),
+            'pet_type' => $_POST['pet_type'],
+            'pet_image' => $petImage,
+            'payment_proof' => $paymentProof,
+            'booking_date' => $_POST['booking_date'],
+            'booking_time' => $_POST['booking_time'],
+            'notes' => trim($_POST['notes'] ?? ''),
+        ]);
+
+        if (!$updated) {
+            flash('error', 'Booking tidak dapat diperbarui. Pastikan status masih pending.');
+            redirect('index.php?page=riwayat');
+        }
+
+        flash('success', 'Booking berhasil diperbarui.');
+        redirect('index.php?page=riwayat');
+    }
+
     public function profil(): void
     {
         requireLogin();

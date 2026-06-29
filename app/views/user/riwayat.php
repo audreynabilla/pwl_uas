@@ -47,7 +47,16 @@
             <td><?= e($b['pet_name']) ?></td>
             <td><?= e($b['booking_date']) ?> <?= e(substr($b['booking_time'],0,5)) ?></td>
             <td><?= statusBadge($b['status']) ?></td>
-            <td><?php if (in_array($b['status'], ['pending','confirmed'], true)): ?><form method="post" action="index.php?page=riwayat&action=cancel" onsubmit="return confirm('Batalkan booking ini?')"><?= csrfField() ?><input type="hidden" name="id" value="<?= (int) $b['id'] ?>"><button data-no-spinner="true" class="btn btn-danger-paw btn-sm" type="submit">Batalkan</button></form><?php endif; ?></td>
+            <td>
+              <div class="d-flex gap-2 flex-wrap">
+                <?php if ($b['status'] === 'pending'): ?>
+                  <a class="btn btn-outline-paw btn-sm" href="index.php?page=editBooking&id=<?= (int) $b['id'] ?>"><i class="bi bi-pencil-square me-1"></i>Edit</a>
+                  <form method="post" action="index.php?page=riwayat&action=cancel" onsubmit="return confirm('Batalkan booking ini?')"><?= csrfField() ?><input type="hidden" name="id" value="<?= (int) $b['id'] ?>"><button data-no-spinner="true" class="btn btn-danger-paw btn-sm" type="submit">Batalkan</button></form>
+                <?php elseif ($b['status'] === 'confirmed'): ?>
+                  <form method="post" action="index.php?page=riwayat&action=cancel" onsubmit="return confirm('Batalkan booking ini?')"><?= csrfField() ?><input type="hidden" name="id" value="<?= (int) $b['id'] ?>"><button data-no-spinner="true" class="btn btn-danger-paw btn-sm" type="submit">Batalkan</button></form>
+                <?php endif; ?>
+              </div>
+            </td>
           </tr>
         <?php endforeach; ?>
         </tbody>

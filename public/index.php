@@ -125,6 +125,17 @@ function uploadImage(string $field, string $folder, bool $required): ?string
     return $fileName;
 }
 
+function deleteUploadedFile(string $folder, string $filename): void
+{
+    if ($filename === '') {
+        return;
+    }
+    $path = __DIR__ . '/uploads/' . $folder . '/' . basename($filename);
+    if (is_file($path)) {
+        unlink($path);
+    }
+}
+
 function render(string $view, array $data = []): void
 {
     extract($data, EXTR_SKIP);
@@ -157,6 +168,9 @@ switch ($page) {
         break;
     case 'riwayat':
         $action === 'cancel' ? $user->cancelBooking() : $user->riwayat();
+        break;
+    case 'editBooking':
+        $action === 'update' ? $user->editBookingUpdate() : $user->editBookingForm();
         break;
     case 'profil':
         $action === 'update' ? $user->updateProfil() : $user->profil();

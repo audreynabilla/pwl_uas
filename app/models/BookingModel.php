@@ -61,6 +61,32 @@ class BookingModel
         return $booking ?: null;
     }
 
+    public function findForUser(int $id, int $userId): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT b.*, s.name AS service_name, s.price, s.duration FROM bookings b JOIN services s ON s.id = b.service_id WHERE b.id = ? AND b.user_id = ? LIMIT 1');
+        $stmt->execute([$id, $userId]);
+        $booking = $stmt->fetch();
+        return $booking ?: null;
+    }
+
+    public function updateBooking(int $id, int $userId, array $data): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE bookings SET service_id = ?, pet_name = ?, pet_type = ?, pet_image = COALESCE(?, pet_image), payment_proof = COALESCE(?, payment_proof), booking_date = ?, booking_time = ?, notes = ? WHERE id = ? AND user_id = ? AND status = ?');
+        return $stmt->execute([
+            $data['service_id'],
+            $data['pet_name'],
+            $data['pet_type'],
+            $data['pet_image'] ?? null,
+            $data['payment_proof'] ?? null,
+            $data['booking_date'],
+            $data['booking_time'],
+            $data['notes'] ?? null,
+            $id,
+            $userId,
+            'pending',
+        ]);
+    }
+
     public function update(int $id, array $data): bool
     {
         $stmt = $this->pdo->prepare('UPDATE bookings SET user_id = ?, service_id = ?, pet_name = ?, pet_type = ?, pet_image = COALESCE(?, pet_image), booking_date = ?, booking_time = ?, notes = ?, status = ? WHERE id = ?');

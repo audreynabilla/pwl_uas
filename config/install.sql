@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   pet_name VARCHAR(100) NOT NULL,
   pet_type VARCHAR(50) NOT NULL,
   pet_image VARCHAR(255) DEFAULT NULL,
+  payment_proof VARCHAR(255) DEFAULT NULL,
   booking_date DATE NOT NULL,
   booking_time TIME NOT NULL,
   notes TEXT,

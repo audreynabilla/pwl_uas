@@ -51,6 +51,11 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
     ]);
+
+    $stmt = $pdo->query("SHOW COLUMNS FROM bookings LIKE 'payment_proof'");
+    if (!$stmt->fetch()) {
+        $pdo->exec('ALTER TABLE bookings ADD COLUMN payment_proof VARCHAR(255) DEFAULT NULL AFTER pet_image');
+    }
 } catch (PDOException $e) {
     die('Koneksi database gagal: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
 }
