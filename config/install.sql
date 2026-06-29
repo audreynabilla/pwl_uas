@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   pet_name VARCHAR(100) NOT NULL,
   pet_type VARCHAR(50) NOT NULL,
   pet_image VARCHAR(255) DEFAULT NULL,
+  payment_proof VARCHAR(255) DEFAULT NULL,
   booking_date DATE NOT NULL,
   booking_time TIME NOT NULL,
   notes TEXT,
@@ -50,4 +51,6 @@ INSERT IGNORE INTO services (id, name, description, price, duration, category, i
 (3, 'Anti Kutu Kucing', 'Perawatan anti kutu dan jamur ringan dengan produk grooming yang aman untuk bulu sensitif.', 165000, 100, 'Kucing', 'kucing 3.jpg'),
 (4, 'Puppy Bubble Bath', 'Mandi ceria untuk anjing kecil dengan sampo mild, pengeringan, dan finishing wangi lembut.', 95000, 60, 'Anjing', 'anjing 1.jpg'),
 (5, 'Dog Complete Spa', 'Grooming anjing lengkap: mandi, trim rapi, potong kuku, telinga, paw pad trim, dan parfum.', 185000, 120, 'Anjing', 'anjing 2.jpg'),
-(6, 'Premium Fluffy Treatment', 'Perawatan premium untuk menjaga bulu anjing tetap lembut, bersih, dan mudah disisir.', 225000, 140, 'Anjing', 'anjing 3.jpg');
+(6, 'Premium Fluffy Treatment', 'Perawatan premium untuk menjaga bulu anjing tetap lembut, bersih, dan mudah disisir.', 225000, 140, 'Anjing', 'anjing 3.jpg'),
+(7, 'Konsultasi Veterinary', 'Konsultasi kesehatan dasar bersama tim veterinary untuk pemeriksaan awal anabul.', 125000, 45, 'Veterinary', 'kucing 4.jpg'),
+(8, 'Pemeriksaan Kesehatan Pet', 'Pemeriksaan kesehatan ringan untuk kucing atau anjing, termasuk observasi kondisi bulu, kulit, dan kebiasaan makan.', 175000, 60, 'Veterinary', 'anjing 4.jpg');

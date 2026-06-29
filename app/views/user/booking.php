@@ -25,22 +25,52 @@
       <div class="form-card h-100 p-4 d-flex flex-column justify-content-center">
         <div class="hero-kicker mb-4"><i class="bi bi-calendar-heart paw-icon"></i> Reservasi PawSpa</div>
         <img src="<?= baseUrl('assets/images/kucing 5.jpg') ?>" class="hero-img mx-auto mb-4" alt="Ilustrasi booking">
-        <h1 class="section-title">Booking Grooming</h1>
-        <p>Pilih jadwal terbaik, unggah foto pet, lalu tim PawSpa akan menyiapkan sesi grooming yang nyaman.</p>
+        <h1 class="section-title">Booking Grooming & Veterinary</h1>
+        <p>Pilih tipe layanan, jadwal terbaik, lalu unggah bukti pembayaran agar reservasimu bisa segera diproses.</p>
       </div>
     </div>
     <div class="col-lg-7">
       <form class="form-card p-4 p-md-5" method="post" enctype="multipart/form-data" action="index.php?page=booking&action=store">
         <?= csrfField() ?>
         <div class="row g-4">
+          <div class="col-12">
+            <label class="form-label fw-bold">Tipe Layanan</label>
+            <select name="service_type" id="serviceType" class="form-select" required>
+              <option value="">Pilih tipe layanan</option>
+              <option value="GROOMING">GROOMING</option>
+              <option value="VETERINARY">VETERINARY</option>
+            </select>
+          </div>
           <div class="col-md-6"><label class="form-label fw-bold">Nama Pemilik</label><input class="form-control" value="<?= e($_SESSION['name'] ?? '') ?>" readonly></div>
           <div class="col-md-6"><label class="form-label fw-bold">Nama Hewan</label><input name="pet_name" class="form-control" required></div>
           <div class="col-md-6"><label class="form-label fw-bold">Jenis Hewan</label><select name="pet_type" class="form-select" required><option value="">Pilih</option><option>Kucing</option><option>Anjing</option></select></div>
-          <div class="col-md-6"><label class="form-label fw-bold">Layanan</label><select name="service_id" class="form-select" required><option value="">Pilih layanan</option><?php foreach ($services as $s): ?><option value="<?= (int) $s['id'] ?>" <?= $selectedService === (int) $s['id'] ? 'selected' : '' ?>><?= e($s['name']) ?> - <?= rupiah($s['price']) ?></option><?php endforeach; ?></select></div>
-          <div class="col-md-6"><label class="form-label fw-bold">Tanggal Grooming</label><input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" class="form-control" required></div>
-          <div class="col-md-6"><label class="form-label fw-bold">Jam Grooming</label><input type="time" name="booking_time" min="08:00" max="17:00" class="form-control" required></div>
-          <div class="col-12"><label class="form-label fw-bold">Catatan Khusus</label><textarea name="notes" class="form-control" rows="3"></textarea></div>
-          <div class="col-12"><label class="form-label fw-bold">Upload Foto Hewan</label><input type="file" name="pet_image" class="form-control image-input" accept=".jpg,.jpeg,.png" data-preview="#petPreview" required><img id="petPreview" class="table-thumb d-none mt-3" alt="Preview"></div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold">Layanan</label>
+            <select name="service_id" id="serviceSelect" class="form-select" required>
+              <option value="">Pilih tipe layanan dulu</option>
+              <?php foreach ($services as $s): ?>
+                <?php $type = $s['category'] === 'Veterinary' ? 'VETERINARY' : 'GROOMING'; ?>
+                <option value="<?= (int) $s['id'] ?>" data-type="<?= e($type) ?>" data-category="<?= e($s['category']) ?>" data-price="<?= e((string) $s['price']) ?>" <?= $selectedService === (int) $s['id'] ? 'selected' : '' ?>>
+                  <?= e($s['name']) ?> - <?= rupiah($s['price']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+            <div id="servicePrice" class="price mt-2 d-none"></div>
+          </div>
+          <div class="col-md-6"><label class="form-label fw-bold">Tanggal Booking</label><input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label fw-bold">Jam Booking</label><input type="time" name="booking_time" min="08:00" max="17:00" class="form-control" required></div>
+          <div class="col-12"><label class="form-label fw-bold">Catatan Khusus</label><textarea name="notes" class="form-control" rows="3" required></textarea></div>
+          <div class="col-12">
+            <div class="hero-kicker mb-3"><i class="bi bi-person-heart paw-icon"></i> About You</div>
+            <label class="form-label fw-bold">Upload Bukti Pembayaran</label>
+            <input type="file" name="payment_proof" class="form-control image-input" accept=".jpg,.jpeg,.png" data-preview="#paymentPreview" required>
+            <img id="paymentPreview" class="table-thumb d-none mt-3" alt="Preview bukti pembayaran">
+          </div>
+          <div class="col-12 d-none" id="vetPetPhotoWrap">
+            <label class="form-label fw-bold">Upload Foto Hewan Veterinary (Opsional)</label>
+            <input type="file" name="pet_image" class="form-control image-input" accept=".jpg,.jpeg,.png" data-preview="#petPreview">
+            <img id="petPreview" class="table-thumb d-none mt-3" alt="Preview foto hewan">
+          </div>
         </div>
         <button class="btn btn-primary-paw mt-4" type="submit"><i class="bi bi-calendar-check me-2"></i>Kirim Booking</button>
       </form>
@@ -48,5 +78,55 @@
   </div>
 </main>
 <script src="<?= baseUrl('assets/js/main.js') ?>"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const typeSelect = document.getElementById('serviceType');
+  const serviceSelect = document.getElementById('serviceSelect');
+  const priceBox = document.getElementById('servicePrice');
+  const vetPhoto = document.getElementById('vetPetPhotoWrap');
+  const originalOptions = Array.from(serviceSelect.querySelectorAll('option[data-type]'));
+  const selectedService = '<?= (int) $selectedService ?>';
+
+  function rupiah(value) {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(value || 0));
+  }
+
+  function setTypeFromSelected() {
+    const selected = originalOptions.find((option) => option.value === selectedService);
+    if (selected && !typeSelect.value) typeSelect.value = selected.dataset.type;
+  }
+
+  function rebuildServices() {
+    const type = typeSelect.value;
+    serviceSelect.innerHTML = '<option value="">Pilih layanan</option>';
+    originalOptions.forEach((option) => {
+      if (!type || option.dataset.type === type) {
+        serviceSelect.appendChild(option.cloneNode(true));
+      }
+    });
+    if (selectedService && Array.from(serviceSelect.options).some((option) => option.value === selectedService)) {
+      serviceSelect.value = selectedService;
+    }
+    vetPhoto.classList.toggle('d-none', type !== 'VETERINARY');
+    updatePrice();
+  }
+
+  function updatePrice() {
+    const option = serviceSelect.selectedOptions[0];
+    if (!option || !option.dataset.price) {
+      priceBox.classList.add('d-none');
+      priceBox.textContent = '';
+      return;
+    }
+    priceBox.textContent = 'Harga layanan: ' + rupiah(option.dataset.price);
+    priceBox.classList.remove('d-none');
+  }
+
+  setTypeFromSelected();
+  rebuildServices();
+  typeSelect.addEventListener('change', rebuildServices);
+  serviceSelect.addEventListener('change', updatePrice);
+});
+</script>
 </body>
 </html>

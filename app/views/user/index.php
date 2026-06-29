@@ -50,7 +50,7 @@
             <a class="btn btn-outline-paw btn-lg" href="#layanan"><i class="bi bi-grid me-2"></i>Lihat Layanan</a>
           </div>
           <div class="row g-3">
-            <div class="col-4"><div class="mini-stat"><strong>6+</strong><span>Layanan</span></div></div>
+            <div class="col-4"><div class="mini-stat"><strong><?= count($services) ?>+</strong><span>Layanan</span></div></div>
             <div class="col-4"><div class="mini-stat"><strong>08-17</strong><span>Jam buka</span></div></div>
             <div class="col-4"><div class="mini-stat"><strong>2MB</strong><span>Upload foto</span></div></div>
           </div>
@@ -104,6 +104,7 @@
         <button class="btn btn-outline-paw active" data-filter="Semua">Semua</button>
         <button class="btn btn-outline-paw" data-filter="Kucing">Kucing</button>
         <button class="btn btn-outline-paw" data-filter="Anjing">Anjing</button>
+        <button class="btn btn-outline-paw" data-filter="Veterinary">Veterinary</button>
       </div>
     </div>
     <div class="row g-4">

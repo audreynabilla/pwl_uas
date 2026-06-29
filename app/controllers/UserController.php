@@ -43,25 +43,41 @@ class UserController
     {
         requireLogin();
         verifyCsrf();
-        $required = ['pet_name', 'pet_type', 'service_id', 'booking_date', 'booking_time'];
+        $required = ['service_type', 'pet_name', 'pet_type', 'service_id', 'booking_date', 'booking_time', 'notes'];
         foreach ($required as $field) {
             if (empty($_POST[$field])) {
                 flash('error', 'Semua field wajib diisi.');
                 redirect('index.php?page=booking');
             }
         }
+
+        $service = $this->services->find((int) $_POST['service_id']);
+        if (!$service) {
+            flash('error', 'Layanan tidak ditemukan.');
+            redirect('index.php?page=booking');
+        }
+
+        $serviceType = $_POST['service_type'];
+        $isVeterinary = $service['category'] === 'Veterinary';
+        if (($serviceType === 'VETERINARY' && !$isVeterinary) || ($serviceType === 'GROOMING' && $isVeterinary) || !in_array($serviceType, ['GROOMING', 'VETERINARY'], true)) {
+            flash('error', 'Tipe layanan tidak sesuai dengan layanan yang dipilih.');
+            redirect('index.php?page=booking');
+        }
+
         if ($_POST['booking_time'] < '08:00' || $_POST['booking_time'] > '17:00' || $_POST['booking_date'] < date('Y-m-d')) {
             flash('error', 'Pilih tanggal hari ini atau setelahnya, jam 08:00 sampai 17:00.');
             redirect('index.php?page=booking');
         }
 
-        $petImage = uploadImage('pet_image', 'pets', true);
+        $paymentProof = uploadImage('payment_proof', 'payments', true);
+        $petImage = uploadImage('pet_image', 'pets', false);
         $this->bookings->create([
             'user_id' => $_SESSION['user_id'],
             'service_id' => (int) $_POST['service_id'],
             'pet_name' => trim($_POST['pet_name']),
             'pet_type' => $_POST['pet_type'],
             'pet_image' => $petImage,
+            'payment_proof' => $paymentProof,
             'booking_date' => $_POST['booking_date'],
             'booking_time' => $_POST['booking_time'],
             'notes' => trim($_POST['notes'] ?? ''),
@@ -81,7 +97,12 @@ class UserController
     {
         requireLogin();
         verifyCsrf();
-        $this->bookings->updateStatus((int) ($_POST['id'] ?? 0), 'cancelled', (int) $_SESSION['user_id']);
+        $bookingId = (int) ($_POST['id'] ?? 0);
+        if (!$this->bookings->canUserCancel($bookingId, (int) $_SESSION['user_id'])) {
+            flash('error', 'Booking hanya bisa dibatalkan saat pending/confirmed dan maksimal 24 jam setelah dibuat.');
+            redirect('index.php?page=riwayat');
+        }
+        $this->bookings->updateStatus($bookingId, 'cancelled', (int) $_SESSION['user_id']);
         flash('success', 'Booking berhasil dibatalkan.');
         redirect('index.php?page=riwayat');
     }

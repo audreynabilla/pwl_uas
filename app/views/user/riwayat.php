@@ -40,6 +40,10 @@
         <thead><tr><th>No.</th><th>Foto Hewan</th><th>Layanan</th><th>Nama Hewan</th><th>Tanggal & Jam</th><th>Status</th><th>Aksi</th></tr></thead>
         <tbody>
         <?php foreach ($bookings as $i => $b): ?>
+          <?php
+            $createdAt = strtotime($b['created_at']);
+            $canCancel = in_array($b['status'], ['pending','confirmed'], true) && $createdAt && (time() - $createdAt <= 24 * 60 * 60);
+          ?>
           <tr>
             <td><?= $i + 1 ?></td>
             <td><?php if ($b['pet_image']): ?><img class="table-thumb" src="<?= baseUrl('uploads/pets/' . $b['pet_image']) ?>" alt="<?= e($b['pet_name']) ?>"><?php endif; ?></td>
@@ -47,7 +51,7 @@
             <td><?= e($b['pet_name']) ?></td>
             <td><?= e($b['booking_date']) ?> <?= e(substr($b['booking_time'],0,5)) ?></td>
             <td><?= statusBadge($b['status']) ?></td>
-            <td><?php if (in_array($b['status'], ['pending','confirmed'], true)): ?><form method="post" action="index.php?page=riwayat&action=cancel" onsubmit="return confirm('Batalkan booking ini?')"><?= csrfField() ?><input type="hidden" name="id" value="<?= (int) $b['id'] ?>"><button data-no-spinner="true" class="btn btn-danger-paw btn-sm" type="submit">Batalkan</button></form><?php endif; ?></td>
+            <td><?php if ($canCancel): ?><form method="post" action="index.php?page=riwayat&action=cancel" onsubmit="return confirm('Batalkan booking ini?')"><?= csrfField() ?><input type="hidden" name="id" value="<?= (int) $b['id'] ?>"><button data-no-spinner="true" class="btn btn-danger-paw btn-sm" type="submit">Batalkan</button></form><?php elseif (in_array($b['status'], ['pending','confirmed'], true)): ?><span class="text-muted small">Lewat 24 jam</span><?php endif; ?></td>
           </tr>
         <?php endforeach; ?>
         </tbody>

@@ -95,7 +95,8 @@ class AdminController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verifyCsrf();
             $data = $this->bookingPayload(true);
-            $data['pet_image'] = uploadImage('pet_image', 'pets', true);
+            $data['pet_image'] = uploadImage('pet_image', 'pets', false);
+            $data['payment_proof'] = uploadImage('payment_proof', 'payments', false);
             $this->bookings->create($data);
             flash('success', 'Booking manual berhasil ditambahkan.');
             redirect('index.php?page=admin&section=bookings');
@@ -115,6 +116,7 @@ class AdminController
             verifyCsrf();
             $data = $this->bookingPayload(true);
             $data['pet_image'] = uploadImage('pet_image', 'pets', false);
+            $data['payment_proof'] = uploadImage('payment_proof', 'payments', false);
             $this->bookings->update((int) $booking['id'], $data);
             flash('success', 'Booking berhasil diperbarui.');
             redirect('index.php?page=admin&section=bookings');
@@ -148,7 +150,7 @@ class AdminController
             'description' => trim($_POST['description']),
             'price' => (float) $_POST['price'],
             'duration' => (int) $_POST['duration'],
-            'category' => $_POST['category'],
+            'category' => in_array($_POST['category'], ['Kucing', 'Anjing', 'Veterinary'], true) ? $_POST['category'] : 'Kucing',
         ];
     }
 

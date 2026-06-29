@@ -35,6 +35,20 @@ function runInstaller(PDO $serverPdo, string $db): void
             return;
         }
     }
+
+    $stmt = $serverPdo->prepare('SHOW COLUMNS FROM bookings LIKE ?');
+    $stmt->execute(['payment_proof']);
+    if (!$stmt->fetchColumn()) {
+        $serverPdo->exec('ALTER TABLE bookings ADD payment_proof VARCHAR(255) DEFAULT NULL AFTER pet_image');
+    }
+
+    $stmt = $serverPdo->prepare('SELECT COUNT(*) FROM services WHERE category = ?');
+    $stmt->execute(['Veterinary']);
+    if ((int) $stmt->fetchColumn() === 0) {
+        $seed = $serverPdo->prepare('INSERT INTO services (name, description, price, duration, category, image) VALUES (?, ?, ?, ?, ?, ?)');
+        $seed->execute(['Konsultasi Veterinary', 'Konsultasi kesehatan dasar bersama tim veterinary untuk pemeriksaan awal anabul.', 125000, 45, 'Veterinary', 'kucing 4.jpg']);
+        $seed->execute(['Pemeriksaan Kesehatan Pet', 'Pemeriksaan kesehatan ringan untuk kucing atau anjing, termasuk observasi kondisi bulu, kulit, dan kebiasaan makan.', 175000, 60, 'Veterinary', 'anjing 4.jpg']);
+    }
 }
 
 try {
