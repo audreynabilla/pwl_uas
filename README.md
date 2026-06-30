@@ -20,6 +20,13 @@ Gambar dari `D:\kuliyah\SEMESTER 4\PWL\UAS\GAMBAR` sudah disalin ke:
 - `public/assets/images`
 - `public/uploads/services`
 
+## Dibuat Oleh
+
+- Audrey Nabila Laksono
+- Putri Gisca Dwi Rahmawati
+- Aisha Fayza Nur Hidayah
+- Labibah Bunga Masya'il
+
 Perintah salin manual:
 
 ```powershell
