@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($title) ?></title>
 
-    <!-- Bootstrap & Icons -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Google Fonts -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Custom Styles -->
+    
     <link href="<?= baseUrl('assets/css/style.css') ?>" rel="stylesheet">
 </head>
 <body>
@@ -20,12 +20,12 @@
     <main class="admin-main min-vh-100 p-4 p-lg-5">
         <div class="container" style="max-width:900px">
 
-            <!-- Tombol Kembali ke Daftar Booking -->
+            
             <a class="btn btn-outline-paw mb-3" href="index.php?page=admin&section=bookings">
                 <i class="bi bi-arrow-left"></i> Kembali
             </a>
 
-            <!-- Form Tambah Booking Baru -->
+            
             <form class="form-card p-4" method="post" enctype="multipart/form-data" action="index.php?page=admin&section=bookings&action=create">
 
                 <?= csrfField() ?>
@@ -34,7 +34,7 @@
 
                 <div class="row g-3">
 
-                    <!-- Pilih Pemilik (Dropdown) -->
+                    
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Nama Pemilik</label>
                         <select name="user_id" class="form-select" required>
@@ -46,7 +46,7 @@
                         </select>
                     </div>
 
-                    <!-- Pilih Layanan (Dropdown) -->
+                    
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Layanan</label>
                         <select name="service_id" class="form-select" required>
@@ -58,13 +58,13 @@
                         </select>
                     </div>
 
-                    <!-- Nama Hewan -->
+                    
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Nama Hewan</label>
                         <input name="pet_name" class="form-control" required>
                     </div>
 
-                    <!-- Jenis Hewan (Dropdown) -->
+                    
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Jenis Hewan</label>
                         <select name="pet_type" class="form-select" required>
@@ -73,19 +73,19 @@
                         </select>
                     </div>
 
-                    <!-- Tanggal Booking -->
+                    
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Tanggal</label>
                         <input type="date" name="booking_date" class="form-control" required>
                     </div>
 
-                    <!-- Jam Booking (08:00 - 17:00) -->
+                    
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Jam</label>
                         <input type="time" name="booking_time" min="08:00" max="17:00" class="form-control" required>
                     </div>
 
-                    <!-- Status Booking (Dropdown) -->
+                    
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Status</label>
                         <select name="status" class="form-select">
@@ -97,13 +97,13 @@
                         </select>
                     </div>
 
-                    <!-- Catatan (Textarea) -->
+                    
                     <div class="col-12">
                         <label class="form-label fw-bold">Catatan</label>
                         <textarea name="notes" rows="3" class="form-control"></textarea>
                     </div>
 
-                    <!-- Upload Foto Hewan + Preview -->
+                    
                     <div class="col-12">
                         <label class="form-label fw-bold">Foto Hewan</label>
                         <input 
@@ -118,13 +118,13 @@
                     </div>
                 </div>
 
-                <!-- Tombol Submit -->
+                
                 <button class="btn btn-primary-paw mt-4">Simpan Booking</button>
             </form>
         </div>
     </main>
 
-    <!-- JavaScript -->
+    
     <script src="<?= baseUrl('assets/js/main.js') ?>"></script>
 </body>
 </html>
