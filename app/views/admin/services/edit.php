@@ -18,17 +18,11 @@
 <body>
 
     <main class="admin-main min-vh-100 p-4 p-lg-5">
-        <div class="container" style="max-width:860px">
-
-            
-            
-            
+        <div class="container" style="max-width:860px">    
+                     
             <a class="btn btn-outline-paw mb-3" href="index.php?page=admin&section=services">
                 <i class="bi bi-arrow-left"></i> Kembali
-            </a>
-
-            
-            
+            </a>        
             
             <form 
                 class="form-card p-4" 
@@ -38,16 +32,9 @@
             >
 
                 <?= csrfField() ?>
-
                 <h1 class="section-title mb-4">Edit Layanan</h1>
-
-                <div class="row g-3">
-
-                    
-                    
-                    
-
-                    
+                <div class="row g-3">            
+                                      
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Nama Layanan</label>
                         <input 
